@@ -1,62 +1,49 @@
 import User from '../models/user.js';
 
-// CREATE USER
-export const createUser = async (req, res) => {
-    try {
-        const { name, age } = req.body;
-
-        const user = await User.create({ name, age });
-
-        res.json(user);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+export const getUsers = async (req, res, next) => {
+  try {
+    const users = await User.find();
+    res.json({ success: true, data: users });
+  } catch (error) {
+    next(error);
+  }
 };
 
-// GET ALL USERS
-export const getAllUsers = async (req, res) => {
-    try {
-        const users = await User.find();
-
-        res.json(users);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+export const createUser = async (req, res, next) => {
+  try {
+    const newUser = await User.create(req.body);
+    res.status(201).json({ success: true, data: newUser });
+  } catch (error) {
+    next(error);
+  }
 };
 
-// GET ONE USER
-export const getUserById = async (req, res) => {
-    try {
-        const user = await User.findById(req.params.id);
+export const updateUser = async (req, res, next) => {
+  try {
+    const updated = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
 
-        res.json(user);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    if (!updated) {
+      return res.status(404).json({ success: false, message: "User not found" });
     }
+
+    res.json({ success: true, data: updated });
+  } catch (error) {
+    next(error);
+  }
 };
 
-// UPDATE USER
-export const updateUser = async (req, res) => {
-    try {
-        const updated = await User.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true }
-        );
+export const deleteUser = async (req, res, next) => {
+  try {
+    const deleted = await User.findByIdAndDelete(req.params.id);
 
-        res.json(updated);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: "User not found" });
     }
-};
 
-// DELETE USER
-export const deleteUser = async (req, res) => {
-    try {
-        await User.findByIdAndDelete(req.params.id);
-
-        res.json({ message: "User Deleted Successfully" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+    res.json({ success: true, message: "User deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
 };
