@@ -7,7 +7,6 @@ export const register = async (req, res) => {
     const { error } = registerValidation(req.body);
     if (error)
       return res.status(400).json({ success: false, message: error.details[0].message });
-
     const emailExists = await User.findOne({ email: req.body.email });
     if (emailExists)
       return res.status(400).json({ success: false, message: "Email already exists" });
@@ -29,6 +28,7 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
+    console.log(req.body);
     const { error } = loginValidation(req.body);
     if (error)
       return res.status(400).json({ success: false, message: error.details[0].message });
@@ -41,7 +41,7 @@ export const login = async (req, res) => {
     if (!validPass)
       return res.status(400).json({ success: false, message: "Invalid email or password" });
 
-    const token = jwt.sign({ id: user._id }, "MY_SECRET_KEY", { expiresIn: "1h" });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
     res.json({ success: true, message: "Login successful", token });
   } catch (err) {

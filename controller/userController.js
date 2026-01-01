@@ -47,3 +47,45 @@ export const deleteUser = async (req, res, next) => {
     next(error);
   }
 };
+export const getuserbyid = async (req, res) => {
+  try {
+const user = await User.findById(req.params.id).select("-password");
+
+
+    // 2. Check if user exists
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // 3. Success response
+    res.status(200).json({
+      success: true,
+      name: user.name,
+      email: user.email
+    });
+
+  } catch (error) {
+    // 4. Improved error handling
+    console.error("Error fetching user:", error);
+    
+    res.status(400).json({
+      success: false,
+      message: error.message || "Invalid ID format or Server Error"
+    });
+  }
+};
+export const getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+
+    res.json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}

@@ -5,22 +5,21 @@ import router from './routes/userRouter.js'
 import markRouter from './routes/markRouter.js';
 const app = express();
 import dotenv from "dotenv";
-import authRoutes from "./routes/authroute.js"
+import registerRouter from './routes/authroute.js';
+import 'dotenv/config';
+import statusroute from './routes/status.js';
 dotenv.config();
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-
 // Database connection
 connectDB();
 // Routes
 app.use('/api/users', router);
-     
 app.use('/api',markRouter)
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", registerRouter);
+app.use('/api',statusroute)
 // Start server
-
 app.listen(5000, () => {
     console.log("Server running on port 5000");
 });

@@ -7,7 +7,6 @@ export const registerValidation = (data) => {
     password: Joi.string().min(6).required(),
     age: Joi.number().min(1).required(),
   });
-
   return schema.validate(data);
 };
 
@@ -16,6 +15,5 @@ export const loginValidation = (data) => {
     email: Joi.string().email().required(),
     password: Joi.string().required(),
   });
-
   return schema.validate(data);
 };
