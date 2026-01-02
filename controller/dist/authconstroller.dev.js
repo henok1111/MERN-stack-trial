@@ -155,7 +155,8 @@ var login = function login(req, res) {
 
         case 15:
           token = _jsonwebtoken["default"].sign({
-            id: user._id
+            id: user._id,
+            role: user.role
           }, process.env.JWT_SECRET, {
             expiresIn: "1h"
           });
