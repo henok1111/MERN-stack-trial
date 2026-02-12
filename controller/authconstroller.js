@@ -1,49 +1,106 @@
-import User from "../models/user.js";
+import User from "../models/User.js";
+import RefreshToken from "../models/refreshToken.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { registerValidation, loginValidation } from "../validation/authvalidation.js"
+
+/* helpers */
+const generateAccessToken = (user) => {
+  return jwt.sign(
+    { id: user._id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "15m" }
+  );
+};
+
+const generateRefreshToken = (user) => {
+  return jwt.sign(
+    { id: user._id },
+    process.env.JWT_REFRESH_SECRET,
+    { expiresIn: "7d" }
+  );
+};
+
+/* REGISTER */
 export const register = async (req, res) => {
   try {
-    const { error } = registerValidation(req.body);
-    if (error)
-      return res.status(400).json({ success: false, message: error.details[0].message });
-    const emailExists = await User.findOne({ email: req.body.email });
-    if (emailExists)
-      return res.status(400).json({ success: false, message: "Email already exists" });
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const { name, age, email, password } = req.body;
+
+    const exists = await User.findOne({ email });
+    if (exists) return res.status(400).json({ message:"Email exists" });
+
+    const hashed = await bcrypt.hash(password, 10);
+
     const user = await User.create({
-      name: req.body.name,
-      email: req.body.email,
-      password: hashedPassword,
-      age: req.body.age
+      name, age, email, password: hashed
     });
 
-    res.status(201).json({ success: true, message: "User registered", user });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(201).json({ success:true, user });
+  } catch (e) {
+    res.status(500).json({ success:false, message:e.message });
   }
 };
 
+/* LOGIN */
 export const login = async (req, res) => {
   try {
-    console.log(req.body);
-    const { error } = loginValidation(req.body);
-    if (error)
-      return res.status(400).json({ success: false, message: error.details[0].message });
+    const { email, password } = req.body;
 
-    const user = await User.findOne({ email: req.body.email });
-    if (!user)
-      return res.status(400).json({ success: false, message: "Invalid email or password" });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message:"Invalid credentials" });
 
-    const validPass = await bcrypt.compare(req.body.password, user.password);
-    if (!validPass)
-      return res.status(400).json({ success: false, message: "Invalid email or password" });
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(400).json({ message:"Invalid credentials" });
 
-    const token = jwt.sign({ id: user._id ,role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
 
-    res.json({ success: true, message: "Login successful", token });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    await RefreshToken.create({
+      user: user._id,
+      token: refreshToken,
+      expiresAt: new Date(Date.now() + 7*24*60*60*1000)
+    });
+
+    res.json({
+      success:true,
+      accessToken,
+      refreshToken
+    });
+  } catch (e) {
+    res.status(500).json({ success:false, message:e.message });
   }
 };
 
+/* REFRESH */
+export const refresh = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) return res.status(401).json({ message:"No refresh token" });
+
+    const stored = await RefreshToken.findOne({ token: refreshToken });
+    if (!stored) return res.status(403).json({ message:"Invalid refresh token" });
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+    const user = await User.findById(decoded.id);
+
+    const newAccessToken = generateAccessToken(user);
+
+    res.json({ accessToken: newAccessToken });
+  } catch (e) {
+    res.status(403).json({ message:"Refresh failed" });
+  }
+};
+
+/* LOGOUT */
+export const logout = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+
+    await RefreshToken.deleteOne({ token: refreshToken });
+
+    res.json({ success:true, message:"Logged out" });
+  } catch (e) {
+    res.status(500).json({ success:false, message:e.message });
+  }
+};

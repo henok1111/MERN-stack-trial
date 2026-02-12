@@ -7,13 +7,25 @@ exports["default"] = void 0;
 
 var _express = _interopRequireDefault(require("express"));
 
-var _authconstroller = require("../controller/authconstroller.js");
+var _authController = require("../controllers/authController.js");
+
+var _protect = require("../middleware/protect.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var registerRouter = _express["default"].Router();
+var router = _express["default"].Router();
 
-registerRouter.post("/register", _authconstroller.register);
-registerRouter.post("/login", _authconstroller.login);
-var _default = registerRouter;
+router.post("/register", _authController.register);
+router.post("/login", _authController.login);
+router.post("/refresh", _authController.refresh);
+router.post("/logout", _authController.logout);
+/* protected test route */
+
+router.get("/me", _protect.protect, function (req, res) {
+  res.json({
+    success: true,
+    user: req.user
+  });
+});
+var _default = router;
 exports["default"] = _default;
