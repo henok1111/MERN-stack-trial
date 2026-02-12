@@ -5,4 +5,4 @@ import validate from '../middleware/validate.js'
 import { statusSchema } from '../validation/statusValidation.js'
 statusroute.get('/statusdisplay',validate(statusSchema),statusDisplay)
 statusroute.get('/insertstatus',validate(statusSchema),insertStatus)
-export default statusroute
+export default statusroute    
