@@ -7,21 +7,21 @@ exports["default"] = void 0;
 
 var _express = _interopRequireDefault(require("express"));
 
-var _authController = require("../controllers/authController.js");
+var _authconstroller = require("../controller/authconstroller.js");
 
-var _protect = require("../middleware/protect.js");
+var _authMiddleware = require("../middleware/authMiddleware.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var router = _express["default"].Router();
 
-router.post("/register", _authController.register);
-router.post("/login", _authController.login);
-router.post("/refresh", _authController.refresh);
-router.post("/logout", _authController.logout);
+router.post("/register", _authconstroller.register);
+router.post("/login", _authconstroller.login);
+router.post("/refresh", _authconstroller.refresh);
+router.post("/logout", _authconstroller.logout);
 /* protected test route */
 
-router.get("/me", _protect.protect, function (req, res) {
+router.get("/me", _authMiddleware.protect, function (req, res) {
   res.json({
     success: true,
     user: req.user

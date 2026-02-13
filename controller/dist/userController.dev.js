@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getProfile = exports.getuserbyid = exports.deleteUser = exports.updateUser = exports.createUser = exports.getUsers = void 0;
 
-var _user = _interopRequireDefault(require("../models/user.js"));
+var _User = _interopRequireDefault(require("../models/User.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -17,7 +17,7 @@ var getUsers = function getUsers(req, res, next) {
         case 0:
           _context.prev = 0;
           _context.next = 3;
-          return regeneratorRuntime.awrap(_user["default"].find());
+          return regeneratorRuntime.awrap(_User["default"].find());
 
         case 3:
           users = _context.sent;
@@ -51,7 +51,7 @@ var createUser = function createUser(req, res, next) {
         case 0:
           _context2.prev = 0;
           _context2.next = 3;
-          return regeneratorRuntime.awrap(_user["default"].create(req.body));
+          return regeneratorRuntime.awrap(_User["default"].create(req.body));
 
         case 3:
           newUser = _context2.sent;
@@ -85,7 +85,7 @@ var updateUser = function updateUser(req, res, next) {
         case 0:
           _context3.prev = 0;
           _context3.next = 3;
-          return regeneratorRuntime.awrap(_user["default"].findByIdAndUpdate(req.params.id, req.body, {
+          return regeneratorRuntime.awrap(_User["default"].findByIdAndUpdate(req.params.id, req.body, {
             "new": true
           }));
 
@@ -133,7 +133,7 @@ var deleteUser = function deleteUser(req, res, next) {
         case 0:
           _context4.prev = 0;
           _context4.next = 3;
-          return regeneratorRuntime.awrap(_user["default"].findByIdAndDelete(req.params.id));
+          return regeneratorRuntime.awrap(_User["default"].findByIdAndDelete(req.params.id));
 
         case 3:
           deleted = _context4.sent;
@@ -179,7 +179,7 @@ var getuserbyid = function getuserbyid(req, res) {
         case 0:
           _context5.prev = 0;
           _context5.next = 3;
-          return regeneratorRuntime.awrap(_user["default"].findById(req.params.id).select("-password"));
+          return regeneratorRuntime.awrap(_User["default"].findById(req.params.id).select("-password"));
 
         case 3:
           user = _context5.sent;
@@ -232,7 +232,7 @@ var getProfile = function getProfile(req, res) {
         case 0:
           _context6.prev = 0;
           _context6.next = 3;
-          return regeneratorRuntime.awrap(_user["default"].findById(req.user.id).select("-password"));
+          return regeneratorRuntime.awrap(_User["default"].findById(req.user.id).select("-password"));
 
         case 3:
           user = _context6.sent;

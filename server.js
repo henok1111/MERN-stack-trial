@@ -1,3 +1,5 @@
+
+
 import express from 'express';
 import cors from 'cors';
 import connectDB from './config/db.js';
@@ -23,3 +25,5 @@ app.use('/api',statusroute)
 app.listen(5000, () => {
     console.log("Server running on port 5000");
 });
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
+console.log("REFRESH_SECRET:", process.env.REFRESH_SECRET);

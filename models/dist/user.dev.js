@@ -26,7 +26,8 @@ var userSchema = new _mongoose["default"].Schema({
   password: {
     type: String,
     required: true,
-    minlength: 6
+    minlength: 6,
+    select: false
   },
   age: {
     type: Number,
