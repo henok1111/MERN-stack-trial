@@ -17,6 +17,10 @@ app.use(express.json());
 // Database connection
 connectDB();
 // Routes
+import postRoute from './routes/postRoutes.js';
+
+app.use("/api/posts", postRoute);
+
 app.use('/api/users', router);
 app.use('/api',markRouter)
 app.use("/api/auth", registerRouter);

@@ -18,6 +18,8 @@ require("dotenv/config");
 
 var _status = _interopRequireDefault(require("./routes/status.js"));
 
+var _postRoutes = _interopRequireDefault(require("./routes/postRoutes.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var app = (0, _express["default"])();
@@ -30,6 +32,7 @@ app.use(_express["default"].json()); // Database connection
 
 (0, _db["default"])(); // Routes
 
+app.use("/api/posts", _postRoutes["default"]);
 app.use('/api/users', _userRouter["default"]);
 app.use('/api', _markRouter["default"]);
 app.use("/api/auth", _authroute["default"]);

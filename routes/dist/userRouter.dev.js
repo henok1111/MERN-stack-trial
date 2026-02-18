@@ -17,6 +17,8 @@ var _authorize = require("../middleware/authorize.js");
 
 var _userValidation = require("../validation/userValidation.js");
 
+var _ownership = require("../middleware/ownership.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var router = _express["default"].Router();
@@ -26,6 +28,6 @@ router.get("/profile", _authMiddleware.protect, _userController.getProfile);
 router.post("/", (0, _validate["default"])(_userValidation.createUserSchema), _userController.createUser);
 router.put("/:id", (0, _validate["default"])(_userValidation.updateUserSchema), _userController.updateUser);
 router["delete"]("/:id", _userController.deleteUser);
-router.get("/:id", _authMiddleware.protect, _userController.getuserbyid);
+router.get("/:id", _authMiddleware.protect, (0, _ownership.ownership)("id"), _userController.getuserbyid);
 var _default = router;
 exports["default"] = _default;
