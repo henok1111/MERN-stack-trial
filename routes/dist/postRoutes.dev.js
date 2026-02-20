@@ -21,11 +21,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 
 var router = _express["default"].Router();
 /* AUTH REQUIRED */
+//router.use(protect);
 
-
-router.use(_authMiddleware.protect);
 /* ROUTES */
 // Create
+
 
 router.post("/", _postController.createPost); // Read own posts
 

@@ -15,7 +15,7 @@ import Post from "../models/post.js";
 const router = express.Router();
 
 /* AUTH REQUIRED */
-router.use(protect);
+//router.use(protect);
 
 /* ROUTES */
 

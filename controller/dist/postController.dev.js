@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.deletePost = exports.updatePost = exports.getPostById = exports.getPosts = exports.createPost = void 0;
 
-var _Post = _interopRequireDefault(require("../models/Post.js"));
+var _post = _interopRequireDefault(require("../models/post.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -18,7 +18,7 @@ var createPost = function createPost(req, res) {
         case 0:
           _context.prev = 0;
           _context.next = 3;
-          return regeneratorRuntime.awrap(_Post["default"].create({
+          return regeneratorRuntime.awrap(_post["default"].create({
             title: req.body.title,
             content: req.body.content,
             user: req.user.id // 🔑 ownership binding
@@ -62,7 +62,7 @@ var getPosts = function getPosts(req, res) {
         case 0:
           _context2.prev = 0;
           _context2.next = 3;
-          return regeneratorRuntime.awrap(_Post["default"].find({
+          return regeneratorRuntime.awrap(_post["default"].find({
             user: req.user.id
           }));
 
