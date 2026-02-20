@@ -3,15 +3,13 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getPostById = exports.createPost = void 0;
+exports.deletePost = exports.updatePost = exports.getPostById = exports.getPosts = exports.createPost = void 0;
 
-var _post = _interopRequireDefault(require("../models/post.js"));
+var _Post = _interopRequireDefault(require("../models/Post.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-/**
- * Create post
- */
+/* CREATE */
 var createPost = function createPost(req, res) {
   var post;
   return regeneratorRuntime.async(function createPost$(_context) {
@@ -20,11 +18,11 @@ var createPost = function createPost(req, res) {
         case 0:
           _context.prev = 0;
           _context.next = 3;
-          return regeneratorRuntime.awrap(_post["default"].create({
+          return regeneratorRuntime.awrap(_Post["default"].create({
             title: req.body.title,
             content: req.body.content,
-            // 🔐 ownership assignment
-            userId: req.user.id
+            user: req.user.id // 🔑 ownership binding
+
           }));
 
         case 3:
@@ -51,64 +49,153 @@ var createPost = function createPost(req, res) {
     }
   }, null, null, [[0, 7]]);
 };
+/* READ ALL (only own data) */
+
 
 exports.createPost = createPost;
 
-var getPostById = function getPostById(req, res) {
-  var post;
-  return regeneratorRuntime.async(function getPostById$(_context2) {
+var getPosts = function getPosts(req, res) {
+  var posts;
+  return regeneratorRuntime.async(function getPosts$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
           _context2.prev = 0;
           _context2.next = 3;
-          return regeneratorRuntime.awrap(_post["default"].findById(req.params.id));
+          return regeneratorRuntime.awrap(_Post["default"].find({
+            user: req.user.id
+          }));
 
         case 3:
-          post = _context2.sent;
-
-          if (post) {
-            _context2.next = 6;
-            break;
-          }
-
-          return _context2.abrupt("return", res.status(404).json({
-            message: "Post not found"
-          }));
-
-        case 6:
-          if (!(post.userId.toString() !== req.user.id)) {
-            _context2.next = 8;
-            break;
-          }
-
-          return _context2.abrupt("return", res.status(403).json({
-            success: false,
-            message: "Access denied: Not your post"
-          }));
-
-        case 8:
+          posts = _context2.sent;
           res.json({
             success: true,
-            post: post
+            posts: posts
           });
-          _context2.next = 14;
+          _context2.next = 10;
           break;
 
-        case 11:
-          _context2.prev = 11;
+        case 7:
+          _context2.prev = 7;
           _context2.t0 = _context2["catch"](0);
           res.status(500).json({
             success: false,
             message: _context2.t0.message
           });
 
-        case 14:
+        case 10:
         case "end":
           return _context2.stop();
       }
     }
-  }, null, null, [[0, 11]]);
+  }, null, null, [[0, 7]]);
 };
+/* READ ONE */
+
+
+exports.getPosts = getPosts;
+
+var getPostById = function getPostById(req, res) {
+  return regeneratorRuntime.async(function getPostById$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          try {
+            res.json({
+              success: true,
+              post: req.resource
+            });
+          } catch (error) {
+            res.status(500).json({
+              success: false,
+              message: error.message
+            });
+          }
+
+        case 1:
+        case "end":
+          return _context3.stop();
+      }
+    }
+  });
+};
+/* UPDATE */
+
 
 exports.getPostById = getPostById;
+
+var updatePost = function updatePost(req, res) {
+  var post;
+  return regeneratorRuntime.async(function updatePost$(_context4) {
+    while (1) {
+      switch (_context4.prev = _context4.next) {
+        case 0:
+          _context4.prev = 0;
+          post = req.resource;
+          post.title = req.body.title || post.title;
+          post.content = req.body.content || post.content;
+          _context4.next = 6;
+          return regeneratorRuntime.awrap(post.save());
+
+        case 6:
+          res.json({
+            success: true,
+            post: post
+          });
+          _context4.next = 12;
+          break;
+
+        case 9:
+          _context4.prev = 9;
+          _context4.t0 = _context4["catch"](0);
+          res.status(500).json({
+            success: false,
+            message: _context4.t0.message
+          });
+
+        case 12:
+        case "end":
+          return _context4.stop();
+      }
+    }
+  }, null, null, [[0, 9]]);
+};
+/* DELETE */
+
+
+exports.updatePost = updatePost;
+
+var deletePost = function deletePost(req, res) {
+  return regeneratorRuntime.async(function deletePost$(_context5) {
+    while (1) {
+      switch (_context5.prev = _context5.next) {
+        case 0:
+          _context5.prev = 0;
+          _context5.next = 3;
+          return regeneratorRuntime.awrap(req.resource.deleteOne());
+
+        case 3:
+          res.json({
+            success: true,
+            message: "Post deleted successfully"
+          });
+          _context5.next = 9;
+          break;
+
+        case 6:
+          _context5.prev = 6;
+          _context5.t0 = _context5["catch"](0);
+          res.status(500).json({
+            success: false,
+            message: _context5.t0.message
+          });
+
+        case 9:
+        case "end":
+          return _context5.stop();
+      }
+    }
+  }, null, null, [[0, 6]]);
+};
+
+exports.deletePost = deletePost;

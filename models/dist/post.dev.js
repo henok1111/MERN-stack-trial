@@ -12,23 +12,24 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 var postSchema = new _mongoose["default"].Schema({
   title: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   content: {
     type: String,
     required: true
   },
-  // 🔗 Ownership link
-  userId: {
+  // 🔑 Ownership link
+  user: {
     type: _mongoose["default"].Schema.Types.ObjectId,
     ref: "User",
-    // reference User collection
     required: true
   }
 }, {
   timestamps: true
 });
 
-var _default = _mongoose["default"].model("Post", postSchema);
+var Post = _mongoose["default"].models.Post || _mongoose["default"].model("Post", postSchema);
 
+var _default = Post;
 exports["default"] = _default;

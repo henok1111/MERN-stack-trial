@@ -4,7 +4,8 @@ const postSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: true
+      required: true,
+      trim: true
     },
 
     content: {
@@ -12,14 +13,15 @@ const postSchema = new mongoose.Schema(
       required: true
     },
 
-    // 🔗 Ownership link
-    userId: {
+    // 🔑 Ownership link
+    user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",   // reference User collection
+      ref: "User",
       required: true
     }
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Post", postSchema);
+const Post = mongoose.models.Post || mongoose.model("Post", postSchema);
+export default Post;

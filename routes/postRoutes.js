@@ -1,20 +1,37 @@
 import express from "express";
+import {
+  createPost,
+  getPosts,
+  getPostById,
+  updatePost,
+  deletePost
+} from "../controller/postController.js";
+
 import { protect } from "../middleware/authMiddleware.js";
 import { ownership } from "../middleware/ownership.js";
-import { createPost } from "../controller/postController.js";
-import { getPostById } from "../controller/postController.js";
-const postRoute = express.Router();
+import { authorizeRoles } from "../middleware/authorizeRoles.js";
+import Post from "../models/post.js";
 
-postRoute.post(
-  "/",
-  protect,          // authentication
-  createPost        // business logic
-);
+const router = express.Router();
 
-postRoute.get(
-  "/:id",
-  protect,
-  getPostById
-);
+/* AUTH REQUIRED */
+router.use(protect);
 
-export default postRoute;
+/* ROUTES */
+
+// Create
+router.post("/", createPost);
+
+// Read own posts
+router.get("/", getPosts);
+
+// Read one (ownership enforced)
+router.get("/:id", ownership(Post, "user"), getPostById);
+
+// Update (ownership enforced)
+router.put("/:id", ownership(Post, "user"), updatePost);
+
+// Delete (ownership + admin override)
+router.delete("/:id", ownership(Post, "user"), authorizeRoles("admin"), deletePost);
+
+export default router;
