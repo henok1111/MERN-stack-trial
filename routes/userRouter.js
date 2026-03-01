@@ -12,6 +12,7 @@ import { getProfile } from "../controller/userController.js";
 import { authorize } from "../middleware/authorize.js";
 import { createUserSchema, updateUserSchema } from "../validation/userValidation.js";
 import { ownership } from "../middleware/ownership.js";
+import User from "../models/user.js";
 const router = express.Router();
 router.get("/user",protect,authorize("admin")
 , getUsers);
@@ -19,5 +20,5 @@ router.get("/profile",protect, getProfile);
 router.post("/", validate(createUserSchema), createUser);
 router.put("/:id", validate(updateUserSchema), updateUser);
 router.delete("/:id", deleteUser);
-router.get("/:id",protect,ownership("id"),getuserbyid)
+router.get("/:id",protect,ownership(User, "_id"),getuserbyid)
 export default router;

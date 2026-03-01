@@ -10,6 +10,7 @@ import dotenv from "dotenv";
 import registerRouter from './routes/authroute.js';
 import 'dotenv/config';
 import statusroute from './routes/status.js';
+import commentRoute from './routes/commentRoute.js';
 dotenv.config();
 // Middleware
 app.use(cors());
@@ -25,6 +26,7 @@ app.use('/api/users', router);
 app.use('/api',markRouter)
 app.use("/api/auth", registerRouter);
 app.use('/api',statusroute)
+app.use('/api/posts/:postId/comments', commentRoute)
 // Start server
 app.listen(5000, () => {
     console.log("Server running on port 5000");

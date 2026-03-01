@@ -15,10 +15,11 @@ catch(error){
 }
 
 }
-export const insertStatus = async (res,req) =>{
-    try{const status = req.body
-    const data = await  statusModel.createOne(status)
-res.send(data)
+export const insertStatus = async (req,res) =>{
+    try{
+    const status = req.body
+    const data = await statusModel.create(status)
+res.status(201).json(data)
 }
     
 

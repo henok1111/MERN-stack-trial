@@ -20,6 +20,24 @@ export const createPost = async (req, res) => {
     });
   }
 };
+export const getAllPostsPublicly = async (req, res) => {
+  try {
+    // No 'user: req.user.id' filter here!
+    const posts = await Post.find().sort({ createdAt: -1 }); // Get all, newest first
+
+    res.json({
+      success: true,
+      count: posts.length,
+      posts
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+      error: error.message
+    });
+  }
+};
 
 /* READ ALL (only own data) */
 export const getPosts = async (req, res) => {
@@ -41,9 +59,18 @@ export const getPosts = async (req, res) => {
 /* READ ONE */
 export const getPostById = async (req, res) => {
   try {
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: "Post not found"
+      });
+    }
+
     res.json({
       success: true,
-      post: req.resource
+      post
     });
   } catch (error) {
     res.status(500).json({
